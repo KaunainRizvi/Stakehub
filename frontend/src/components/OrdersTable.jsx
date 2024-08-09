@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const OrdersTable = () => {
     const [pendingOrders, setPendingOrders] = useState([]);
     const [completedOrders, setCompletedOrders] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchOrders = async () => {
-            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            const storedUserInfo = localStorage.getItem('userInfo');
+            if (!storedUserInfo) {
+                navigate('/login'); // Redirect to login if userInfo is null
+                return;
+            }
+
+            const userInfo = JSON.parse(storedUserInfo);
 
             const config = {
                 headers: {
@@ -15,15 +23,19 @@ const OrdersTable = () => {
                 },
             };
 
-            const { data: pendingData } = await axios.get('/api/orders/pending', config);
-            const { data: completedData } = await axios.get('/api/orders/completed', config);
+            try {
+                const { data: pendingData } = await axios.get('/api/orders/pending', config);
+                const { data: completedData } = await axios.get('/api/orders/completed', config);
 
-            setPendingOrders(pendingData);
-            setCompletedOrders(completedData);
+                setPendingOrders(pendingData);
+                setCompletedOrders(completedData);
+            } catch (error) {
+                console.error('Error fetching orders:', error);
+            }
         };
 
         fetchOrders();
-    }, []);
+    }, [navigate]);
 
     return (
         <div>

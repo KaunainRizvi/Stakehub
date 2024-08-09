@@ -6,21 +6,31 @@ const addOrder = asyncHandler(async (req, res) => {
 
     const match = await Order.findOne({
         buyerPrice: sellerPrice,
-        sellerQty: buyerQty
+        sellerQty: buyerQty,
     });
 
     if (match) {
+        const qty = Math.min(buyerQty, sellerQty);
+
         await CompletedOrder.create({
             price: buyerPrice,
-            qty: Math.min(buyerQty, sellerQty)
+            qty,
         });
 
-        await match.remove();
+        if (match.sellerQty === qty && match.buyerPrice === sellerPrice) {
+            await match.remove(); // Remove the exact matching order
+        } else {
+            match.sellerQty -= qty;
+            await match.save();
+        }
 
         res.status(201).json({ message: 'Order matched and completed!' });
     } else {
         const order = new Order({
-            buyerQty, buyerPrice, sellerPrice, sellerQty
+            buyerQty,
+            buyerPrice,
+            sellerPrice,
+            sellerQty,
         });
 
         const createdOrder = await order.save();
