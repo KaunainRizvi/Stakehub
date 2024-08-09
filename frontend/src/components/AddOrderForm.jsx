@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { TextField, Button, Typography, Container, Alert, Box } from '@mui/material';
 
 const AddOrderForm = () => {
     const [buyerQty, setBuyerQty] = useState('');
@@ -22,24 +23,28 @@ const AddOrderForm = () => {
             };
 
             const { data } = await axios.post('/api/orders/add', { buyerQty, buyerPrice, sellerPrice, sellerQty }, config);
-            setMessage(data.message);
+            setMessage({ type: 'success', text: data.message });
         } catch (error) {
-            setMessage('Error adding order');
+            setMessage({ type: 'error', text: 'Error adding order' });
         }
     };
 
     return (
-        <div>
-            <h2>Add New Order</h2>
-            {message && <p>{message}</p>}
-            <form onSubmit={submitHandler}>
-                <input type="number" placeholder="Buyer Qty" value={buyerQty} onChange={(e) => setBuyerQty(e.target.value)} />
-                <input type="number" placeholder="Buyer Price" value={buyerPrice} onChange={(e) => setBuyerPrice(e.target.value)} />
-                <input type="number" placeholder="Seller Price" value={sellerPrice} onChange={(e) => setSellerPrice(e.target.value)} />
-                <input type="number" placeholder="Seller Qty" value={sellerQty} onChange={(e) => setSellerQty(e.target.value)} />
-                <button type="submit">Add Order</button>
-            </form>
-        </div>
+        <Container maxWidth="sm">
+            <Typography variant="h4" gutterBottom>Add New Order</Typography>
+            {message && (
+                <Alert severity={message.type}>
+                    {message.text}
+                </Alert>
+            )}
+            <Box component="form" onSubmit={submitHandler} sx={{ mt: 3 }}>
+                <TextField fullWidth label="Buyer Qty" type="number" value={buyerQty} onChange={(e) => setBuyerQty(e.target.value)} margin="normal" />
+                <TextField fullWidth label="Buyer Price" type="number" value={buyerPrice} onChange={(e) => setBuyerPrice(e.target.value)} margin="normal" />
+                <TextField fullWidth label="Seller Price" type="number" value={sellerPrice} onChange={(e) => setSellerPrice(e.target.value)} margin="normal" />
+                <TextField fullWidth label="Seller Qty" type="number" value={sellerQty} onChange={(e) => setSellerQty(e.target.value)} margin="normal" />
+                <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>Add Order</Button>
+            </Box>
+        </Container>
     );
 };
 

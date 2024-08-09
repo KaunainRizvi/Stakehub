@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { TextField, Button, Typography, Container, Alert, Box } from '@mui/material';
 
 const Register = () => {
     const [username, setUsername] = useState('');
@@ -19,15 +20,15 @@ const Register = () => {
     };
 
     return (
-        <div>
-            <h2>Register</h2>
-            {error && <p>{error}</p>}
-            <form onSubmit={submitHandler}>
-                <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
-                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                <button type="submit">Register</button>
-            </form>
-        </div>
+        <Container maxWidth="sm">
+            <Typography variant="h4" gutterBottom>Register</Typography>
+            {error && <Alert severity="error">{error}</Alert>}
+            <Box component="form" onSubmit={submitHandler} sx={{ mt: 3 }}>
+                <TextField fullWidth label="Username" value={username} onChange={(e) => setUsername(e.target.value)} margin="normal" />
+                <TextField fullWidth label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} margin="normal" />
+                <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>Register</Button>
+            </Box>
+        </Container>
     );
 };
 

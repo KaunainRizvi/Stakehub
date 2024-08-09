@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Container } from '@mui/material';
 
 const OrdersTable = () => {
     const [pendingOrders, setPendingOrders] = useState([]);
@@ -11,7 +12,7 @@ const OrdersTable = () => {
         const fetchOrders = async () => {
             const storedUserInfo = localStorage.getItem('userInfo');
             if (!storedUserInfo) {
-                navigate('/login'); // Redirect to login if userInfo is null
+                navigate('/login'); 
                 return;
             }
 
@@ -38,47 +39,51 @@ const OrdersTable = () => {
     }, [navigate]);
 
     return (
-        <div>
-            <h2>Pending Orders</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Buyer Qty</th>
-                        <th>Buyer Price</th>
-                        <th>Seller Price</th>
-                        <th>Seller Qty</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {pendingOrders.map((order) => (
-                        <tr key={order._id}>
-                            <td>{order.buyerQty}</td>
-                            <td>{order.buyerPrice}</td>
-                            <td>{order.sellerPrice}</td>
-                            <td>{order.sellerQty}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+        <Container>
+            <Typography variant="h4" gutterBottom>Pending Orders</Typography>
+            <TableContainer component={Paper}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Buyer Qty</TableCell>
+                            <TableCell>Buyer Price</TableCell>
+                            <TableCell>Seller Price</TableCell>
+                            <TableCell>Seller Qty</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {pendingOrders.map((order) => (
+                            <TableRow key={order._id}>
+                                <TableCell>{order.buyerQty}</TableCell>
+                                <TableCell>{order.buyerPrice}</TableCell>
+                                <TableCell>{order.sellerPrice}</TableCell>
+                                <TableCell>{order.sellerQty}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
 
-            <h2>Completed Orders</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Price</th>
-                        <th>Qty</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {completedOrders.map((order) => (
-                        <tr key={order._id}>
-                            <td>{order.price}</td>
-                            <td>{order.qty}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+            <Typography variant="h4" gutterBottom sx={{ mt: 4 }}>Completed Orders</Typography>
+            <TableContainer component={Paper}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Price</TableCell>
+                            <TableCell>Qty</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {completedOrders.map((order) => (
+                            <TableRow key={order._id}>
+                                <TableCell>{order.price}</TableCell>
+                                <TableCell>{order.qty}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </Container>
     );
 };
 
